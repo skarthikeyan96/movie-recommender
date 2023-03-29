@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import useSWR from "swr";
+import Select from "react-select";
 
 // const FetchAndRenderMovies = async ({ genre, rating }: any) => {
 //   const response = await fetch(
@@ -13,9 +14,59 @@ import useSWR from "swr";
 //   return <>{JSON.stringify(data)}</>;
 // };
 
-
 const Home: NextPage = () => {
-  const [genre, setGenre] = useState("");
+  const genres = [
+    "Action",
+    "Adventure",
+    "Animated",
+    "Biography",
+    "Comedy",
+    "Crime",
+    "Dance",
+    "Disaster",
+    "Documentary",
+    "Drama",
+    "Erotic",
+    "Family",
+    "Fantasy",
+    "Found Footage",
+    "Historical",
+    "Horror",
+    "Independent",
+    "Legal",
+    "Live Action",
+    "Martial Arts",
+    "Musical",
+    "Mystery",
+    "Noir",
+    "Performance",
+    "Political",
+    "Romance",
+    "Satire",
+    "Science Fiction",
+    "Short",
+    "Silent",
+    "Slasher",
+    "Sports",
+    "Spy",
+    "Superhero",
+    "Supernatural",
+    "Suspense",
+    "Teen",
+    "Thriller",
+    "War",
+    "Western",
+  ];
+
+  const arrayToJSON = (array: string[]): any => {
+    return array.map((arr: any) => {
+      return {
+        label: arr,
+        value: arr.toLowerCase(),
+      };
+    });
+  };
+  const [genre, setGenre] = useState({label: "Action", value: "action"});
   const [rating, setRating] = useState("");
 
   const [loading, setIsLoading] = useState(false);
@@ -27,7 +78,7 @@ const Home: NextPage = () => {
     setIsLoading(true);
 
     const response = await fetch(
-      `http://localhost:3001/api/movie?genre=${genre}&rating=${rating}`
+      `http://localhost:3001/api/movie?genre=${ genre.value }&rating=${rating}`
     );
     const data = await response.json();
     setmoviedata(data);
@@ -47,21 +98,26 @@ const Home: NextPage = () => {
             <span className="ml-3 text-xl">Movie Recommender</span>
           </a>
           <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
-            <a className="mr-5 hover:text-gray-900">First Link</a>
           </nav>
         </div>
       </header>
-      <div className="lg:w-1/3 md:w-1/2 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0 relative z-10 shadow-md mr-auto mt-4">
+      <div className="lg:w-1/3 md:w-1/2 bg-white rounded-lg p-8 flex flex-col md:ml-auto w-full md:mt-0 relative z-10 shadow-md mr-auto mt-4">
         <div className="relative mb-4">
-          <input
+         
+          <Select
+            options={arrayToJSON(genres)}
             value={genre}
-            onChange={(e) => setGenre(e.target.value)}
-            className="w-full bg-white rounded border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+            placeholder="Select a genre"
+            onChange={(newValue: any) => {
+              setGenre(newValue);
+            }}
           />
         </div>
         <div className="relative mb-4">
           <input
             value={rating}
+            type="number"
+            placeholder="IMDB Rating"
             onChange={(e) => setRating(e.target.value)}
             className="w-full bg-white rounded border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
           />
